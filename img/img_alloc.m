@@ -28,7 +28,7 @@ if ndims(in) == 3
     img.input = rgb2gray(in);
     %img.input = imadjust(img.input);
 else
-    img.input = in;
+    img.input = uint8(in);
 end
 
 % img.input = fliplr(img.input);
