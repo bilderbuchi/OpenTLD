@@ -6,6 +6,13 @@
 # an official version!
 # Tracking is  working in Octave now, with some changes w.r.t. Zdenek's branch
 # See https://github.com/bilderbuchi/OpenTLD/issues/2 for more information.
+#
+# Webcam support is working in Matlab WITHOUT Image Acquisition Toolbox
+# through stream_server.c using sockets and OpenCV.
+#
+# Webcam in octave is near completion. Frames are grabbed properly from the
+# server but problems with mouse input arise when selectin object boudaries.
+# For stream_server.c to work in octave, the package sockets should be present.
 ################################################################################
 
 TLD (aka Predator)

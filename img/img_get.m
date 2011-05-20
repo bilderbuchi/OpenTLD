@@ -19,7 +19,17 @@
 function img = img_get(source,I)
 
 if source.camera
-    img = img_alloc(getsnapshot(source.vid));
+    if (exist('videoinput','file')) % using matlab with Image Acquisition package
+        img = img_alloc(getsnapshot(source.vid));
+    else % We don't have the Image Acquisition package, using stream_server
+	if exist('OCTAVE_VERSION','builtin') % from octave
+            [ data, count ] = recv (source.socket, 640*480, MSG_WAITALL);
+            stream_img = transpose(data);
+        else %from Matlab
+            stream_img = transpose(fread(source.socket, [640, 480], 'uint8'));
+        end 
+        img = img_alloc(stream_img);
+    end
 else
     img = img_alloc(source.files(source.idx(I)).name);
 end

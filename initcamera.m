@@ -23,14 +23,36 @@
 
 %source.vid = videoinput('winvideo', 1);
 %source.vid = videoinput('winvideo', 1,'RGB24_320x240');
-source.vid = videoinput('winvideo', 1,'YUY2_320x240');
+if exist('videoinput','file')
+    source.vid = videoinput('winvideo', 1,'YUY2_320x240');
 
-set(source.vid,'ReturnedColorSpace','grayscale');
-vidRes = get(source.vid, 'VideoResolution');
-nBands = get(source.vid, 'NumberOfBands');
-hImage = image( zeros(vidRes(2), vidRes(1), nBands) );
+    set(source.vid,'ReturnedColorSpace','grayscale');
+    vidRes = get(source.vid, 'VideoResolution');
+    nBands = get(source.vid, 'NumberOfBands');
+    hImage = image( zeros(vidRes(2), vidRes(1), nBands) );
 
-% open a figure that shows the raw video stream
-preview(source.vid, hImage);
-% makes the raw stream invisible
-set(1,'visible','off');
+    % open a figure that shows the raw video stream
+    preview(source.vid, hImage);
+    % makes the raw stream invisible
+    set(1,'visible','off');
+else %videoinput is not a valid function, try stream_server
+    if exist('OCTAVE_VERSION','builtin') %we are running octave
+        source.socket = socket(AF_INET, SOCK_STREAM, 0);
+        serverinfo.addr = 'localhost';
+        serverinfo.port = 5000;
+        connect_status = connect(source.socket, serverinfo);
+    else %we are running a Matlab without Image Acquisition package
+        source.socket = tcpip('localhost', 5000);
+        set(source.socket, 'InputBufferSize', 640*480);
+	fopen(source.socket);
+	connect_status = get(source.socket,'Status');
+	connect_status = strcmp(connect_status, 'closed');
+    end
+    % check connection status
+    if connect_status == 0 %successful connection
+    else %maybe stream_server is not running
+        %TODO: report error
+	error('Error while connecting to stream server!');
+	
+    end
+end
