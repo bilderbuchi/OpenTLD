@@ -24,6 +24,7 @@ if source.camera
     else % We don't have the Image Acquisition package, using stream_server
 	if exist('OCTAVE_VERSION','builtin') % from octave
             [ data, count ] = recv (source.socket, 640*480, MSG_WAITALL);
+	    data = reshape (data, [640 480]);
             stream_img = transpose(data);
         else %from Matlab
             stream_img = transpose(fread(source.socket, [640, 480], 'uint8'));

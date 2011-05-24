@@ -26,9 +26,15 @@ else
     imshow(img);
 end
 text(10,10,'Define bounding box and double click inside.','color','white');
-h = imrect;
-p = wait(h);
-bb = [p(1); p(2);p(1)+p(3); p(2)+p(4)];
+if exist('OCTAVE_VERSION', 'builtin')
+    % while we don't have a imrect equivalent in Octave
+    % use the hardcoded bellow (a centered 200x200 pixels box)
+    bb = [ 640/2-100; 480/2-100; 640/2+100; 480/2+100];
+else
+    h = imrect;
+    p = wait(h);
+    bb = [p(1); p(2);p(1)+p(3); p(2)+p(4)];
+end
 % [c,r,p] = impixel(img);
 % if length(c) ~= 2,
 %     bb = [];
